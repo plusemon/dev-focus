@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Task, TaskStatus, Tag, INITIAL_TAGS, Subtask, Priority } from '../types';
 import { useTaskContext } from '../context/TaskContext';
+import { useModalShortcuts } from '../hooks/useKeyboardShortcuts';
 import {
   X,
   Save,
@@ -14,6 +15,7 @@ import {
   Link2,
   Eraser,
   RemoveFormatting,
+  Keyboard,
 } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { ConfirmationModal } from './ConfirmationModal';
@@ -203,10 +205,6 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     setFormState((prev) => ({ ...prev, description }));
   }, []);
 
-  const setStatus = useCallback((status: TaskStatus) => {
-    setFormState((prev) => ({ ...prev, status }));
-  }, []);
-
   const setProjectId = useCallback((projectId: string) => {
     setFormState((prev) => ({ ...prev, projectId }));
   }, []);
@@ -316,6 +314,34 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   const handleCancelDelete = useCallback(() => {
     setShowDeleteConfirm(false);
   }, []);
+
+  // Keyboard shortcuts for modal (Escape to close, Ctrl+S to save)
+  useModalShortcuts({
+    isOpen,
+    onClose,
+    onSave: () => {
+      if (isTitleValid) {
+        const taskData = {
+          title: formState.title,
+          description: formState.description,
+          status: formState.status,
+          tags: formState.selectedTags,
+          projectId: formState.projectId || undefined,
+          dueDate: formState.dueDate ?? undefined,
+          priority: formState.priority ?? undefined,
+          subtasks: formState.subtasks.length > 0 ? formState.subtasks : undefined,
+        };
+
+        if (taskToEdit) {
+          updateTask(taskToEdit.id, taskData);
+        } else {
+          addTask(taskData);
+        }
+        onClose();
+      }
+    },
+    onDelete: isEditing ? handleConfirmDelete : undefined,
+  });
 
   // Memoized input handler
   const handleTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -558,7 +584,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({
           <p className="text-xs text-slate-500 dark:text-slate-400">
             {isEditing ? 'Update task details' : 'Create task and start execution'}
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
+              <Keyboard size={12} />
+              <span>Ctrl+S to save</span>
+            </div>
             <button
               type="button"
               onClick={onClose}

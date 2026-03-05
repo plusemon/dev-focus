@@ -1,10 +1,14 @@
 import React from 'react';
 import { useTaskContext } from '../context/TaskContext';
 import { useTimer } from '../hooks/useTimer';
-import { Search, Play, Pause, RotateCcw, Coffee, Menu, Cloud, CloudOff, LogIn, LogOut, Loader2, RefreshCw } from 'lucide-react';
+import { Search, Play, Pause, RotateCcw, Coffee, Menu, Cloud, CloudOff, LogIn, LogOut, Loader2, RefreshCw, HelpCircle } from 'lucide-react';
 import { cn } from '../utils/cn';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  onShowShortcuts?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onShowShortcuts }) => {
   const { 
     searchQuery, 
     setSearchQuery, 
@@ -36,14 +40,31 @@ export const Header: React.FC = () => {
 
         <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={16} />
-            <input 
+            <input
             id="search-input"
-            type="text" 
-            placeholder="Search tasks..."
+            type="text"
+            placeholder="Search tasks... (Press / to focus)"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                setSearchQuery('');
+                (e.target as HTMLInputElement).blur();
+              }
+            }}
             className="w-full bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg pl-9 pr-4 py-1.5 text-sm text-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
             />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded transition-colors"
+              >
+                <span className="sr-only">Clear search</span>
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
         </div>
       </div>
 
@@ -61,6 +82,17 @@ export const Header: React.FC = () => {
 
       {/* Right - Timer & Auth */}
       <div className="flex items-center gap-2 sm:gap-4 pl-2">
+        {/* Help Button */}
+        {onShowShortcuts && (
+          <button
+            onClick={onShowShortcuts}
+            className="hidden sm:flex p-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors"
+            title="Keyboard shortcuts (?"
+          >
+            <HelpCircle size={18} />
+          </button>
+        )}
+
         {/* Sync Status */}
         <div className="hidden sm:flex items-center gap-1.5 text-xs" title={syncStatus === 'idle' ? 'Synced with cloud' : syncStatus === 'syncing' ? 'Syncing...' : syncStatus === 'offline' ? 'Offline - changes saved locally' : 'Not synced'}>
           {isLoading || syncStatus === 'syncing' ? (

@@ -5,15 +5,29 @@ import { Header } from './components/Header';
 import { TaskBoard } from './components/TaskBoard';
 import { TaskList } from './components/TaskList';
 import { TaskModal } from './components/TaskModal';
+import { KeyboardShortcutsGuide } from './components/KeyboardShortcutsGuide';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { Task, TaskStatus } from './types';
+import { useTimer } from './hooks/useTimer';
+import { Task, TaskStatus, ViewMode } from './types';
 import LoginScreen from './components/LoginScreen';
 
 const DevFocusApp: React.FC = () => {
-  const { viewMode, user, isLoading } = useTaskContext();
+  const { 
+    viewMode, 
+    user, 
+    isLoading, 
+    toggleSidebar, 
+    setViewMode, 
+    toggleTheme,
+    searchQuery,
+    setSearchQuery 
+  } = useTaskContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [initialStatus, setInitialStatus] = useState<TaskStatus | undefined>(undefined);
+  const [showShortcutsGuide, setShowShortcutsGuide] = useState(false);
+  
+  const timer = useTimer();
 
   const handleNewTask = (status?: TaskStatus) => {
     setEditingTask(null);
@@ -26,8 +40,38 @@ const DevFocusApp: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const handleToggleViewMode = () => {
+    setViewMode(viewMode === 'KANBAN' ? 'LIST' : 'KANBAN');
+  };
+
+  const handleSearchFocus = () => {
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    if (searchInput) searchInput.focus();
+  };
+
+  const handleSearchClear = () => {
+    setSearchQuery('');
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    if (searchInput) searchInput.blur();
+  };
+
   useKeyboardShortcuts({
     onNewTask: () => handleNewTask(),
+    onToggleSidebar: toggleSidebar,
+    onToggleViewMode: handleToggleViewMode,
+    onToggleTheme: toggleTheme,
+    onShowShortcuts: () => setShowShortcutsGuide(true),
+    onSearchFocus: handleSearchFocus,
+    onSearchClear: handleSearchClear,
+    viewMode,
+    isModalOpen,
+    timer: {
+      isActive: timer.isActive,
+      startTimer: timer.startTimer,
+      pauseTimer: timer.pauseTimer,
+      resetTimer: timer.resetTimer,
+      toggleMode: timer.toggleMode,
+    },
   });
 
   if (isLoading) {
@@ -48,7 +92,7 @@ const DevFocusApp: React.FC = () => {
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header />
+        <Header onShowShortcuts={() => setShowShortcutsGuide(true)} />
         
         <main className="flex-1 overflow-hidden p-4 sm:p-6 relative">
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 dark:opacity-5 pointer-events-none z-0"></div>
@@ -67,6 +111,12 @@ const DevFocusApp: React.FC = () => {
         onClose={() => setIsModalOpen(false)} 
         taskToEdit={editingTask}
         initialStatus={initialStatus}
+      />
+
+      <KeyboardShortcutsGuide
+        isOpen={showShortcutsGuide}
+        onClose={() => setShowShortcutsGuide(false)}
+        viewMode={viewMode}
       />
     </div>
   );
