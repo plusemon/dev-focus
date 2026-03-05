@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useTaskContext } from '../context/TaskContext';
-import { Layout, ListTodo, Hash, Plus, ChevronLeft, ChevronRight, Settings, Trash2, Layers, Sun, Moon, X } from 'lucide-react';
+import { Layout, ListTodo, Hash, Plus, ChevronLeft, ChevronRight, Keyboard, Trash2, Layers, Sun, Moon, X } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ConfirmationModal } from './ConfirmationModal';
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  onShowShortcuts?: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ onShowShortcuts }) => {
   const { 
     sidebarOpen, 
     toggleSidebar, 
@@ -96,7 +100,8 @@ export const Sidebar: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <motion.aside 
+      <motion.aside
+        data-tour="sidebar"
         initial={false}
         animate={sidebarOpen ? "open" : "closed"}
         variants={sidebarVariants}
@@ -130,9 +135,9 @@ export const Sidebar: React.FC = () => {
 
         <div className="flex-1 overflow-y-auto py-6 px-2 space-y-6 scrollbar-hide">
           {/* Views */}
-          <div className="space-y-1">
+          <div className="space-y-1" data-tour="view-toggle">
             {sidebarOpen && <h4 className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Views</h4>}
-            <button 
+            <button
               onClick={() => { setViewMode('KANBAN'); if(isMobile) setSidebarOpen(false); }}
               className={cn("w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors", 
                 viewMode === 'KANBAN' 
@@ -250,9 +255,13 @@ export const Sidebar: React.FC = () => {
                 {sidebarOpen && <span className="text-sm">{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</span>}
             </button>
             
-            {sidebarOpen && (
-                <button className="text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                    <Settings size={20} />
+            {sidebarOpen && onShowShortcuts && (
+                <button
+                    onClick={onShowShortcuts}
+                    className="text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    title="Keyboard shortcuts (?)"
+                >
+                    <Keyboard size={20} />
                 </button>
             )}
         </div>

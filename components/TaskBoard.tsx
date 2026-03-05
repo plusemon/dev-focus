@@ -64,7 +64,7 @@ export const TaskBoard: React.FC<TaskBoardProps> = ({ onEditTask, onNewTask }) =
   };
 
   return (
-    <div className="flex h-full gap-4 sm:gap-6 overflow-x-auto pb-4 items-start snap-x scrollbar-hide">
+    <div data-tour="task-board" className="flex h-full gap-4 sm:gap-6 overflow-x-auto pb-4 items-start snap-x scrollbar-hide">
       {Object.values(TaskStatus).map((status) => (
         <div 
           key={status} 
@@ -87,9 +87,10 @@ export const TaskBoard: React.FC<TaskBoardProps> = ({ onEditTask, onNewTask }) =
                 {getTasksByStatus(status).length}
               </span>
             </div>
-            <button 
+            <button
               onClick={() => onNewTask(status)}
               className="text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 p-1 rounded transition-colors"
+              data-tour={status === 'BACKLOG' ? 'add-task' : undefined}
             >
               <Plus size={16} />
             </button>

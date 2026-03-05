@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
-import { TaskStatus, ViewMode } from '../types';
+import { ViewMode } from '../types';
 
 interface ShortcutsProps {
   onNewTask: () => void;
@@ -9,6 +9,7 @@ interface ShortcutsProps {
   onShowShortcuts?: () => void;
   onSearchFocus?: () => void;
   onSearchClear?: () => void;
+  onRestartTour?: () => void;
   viewMode?: ViewMode;
   isModalOpen?: boolean;
   timer?: {
@@ -28,7 +29,8 @@ export const useKeyboardShortcuts = ({
   onShowShortcuts,
   onSearchFocus,
   onSearchClear,
-  viewMode,
+  onRestartTour,
+  _viewMode,
   isModalOpen = false,
   timer,
 }: ShortcutsProps) => {
@@ -41,6 +43,7 @@ export const useKeyboardShortcuts = ({
     onShowShortcuts,
     onSearchFocus,
     onSearchClear,
+    onRestartTour,
     timer,
   });
 
@@ -53,6 +56,7 @@ export const useKeyboardShortcuts = ({
     onShowShortcuts,
     onSearchFocus,
     onSearchClear,
+    onRestartTour,
     timer,
   };
 
@@ -96,7 +100,12 @@ export const useKeyboardShortcuts = ({
       case '?':
       case 'h':
         e.preventDefault();
-        callbacksRef.current.onShowShortcuts?.();
+        if (e.shiftKey) {
+          // Shift+? to restart tour
+          callbacksRef.current.onRestartTour?.();
+        } else {
+          callbacksRef.current.onShowShortcuts?.();
+        }
         break;
       case '[':
       case 'b':
@@ -229,6 +238,7 @@ export const getShortcutsConfig = (viewMode?: ViewMode): ShortcutCategory[] => [
       { key: '[ or B', description: 'Toggle sidebar' },
       { key: 'V', description: `Switch to ${viewMode === 'KANBAN' ? 'List' : 'Board'} view` },
       { key: 'T', description: 'Toggle dark/light theme' },
+      { key: 'Shift + ?', description: 'Restart onboarding tour' },
     ],
   },
   {

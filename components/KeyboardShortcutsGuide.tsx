@@ -85,7 +85,11 @@ export const KeyboardShortcutsGuide: React.FC<KeyboardShortcutsGuideProps> = ({
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none"
           >
+            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
             <div
+              role="dialog"
+              aria-modal="true"
+              tabIndex={-1}
               className={cn(
                 'w-full max-w-lg max-h-[85vh] overflow-hidden',
                 'bg-white dark:bg-slate-900',
@@ -94,6 +98,11 @@ export const KeyboardShortcutsGuide: React.FC<KeyboardShortcutsGuideProps> = ({
                 'pointer-events-auto'
               )}
               onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  onClose();
+                }
+              }}
             >
               {/* Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
@@ -120,7 +129,7 @@ export const KeyboardShortcutsGuide: React.FC<KeyboardShortcutsGuideProps> = ({
 
               {/* Content */}
               <div className="overflow-y-auto max-h-[60vh] p-6 scrollbar-hide">
-                {shortcutsConfig.map((category, index) => (
+                {shortcutsConfig.map((category) => (
                   <CategorySection key={category.name} category={category} />
                 ))}
 

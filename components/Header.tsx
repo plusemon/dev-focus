@@ -1,7 +1,8 @@
 import React from 'react';
 import { useTaskContext } from '../context/TaskContext';
+import { useTour } from '../context/TourContext';
 import { useTimer } from '../hooks/useTimer';
-import { Search, Play, Pause, RotateCcw, Coffee, Menu, Cloud, CloudOff, LogIn, LogOut, Loader2, RefreshCw, HelpCircle } from 'lucide-react';
+import { Search, Play, Pause, RotateCcw, Coffee, Menu, Cloud, CloudOff, LogIn, LogOut, Loader2, RefreshCw, HelpCircle, Map } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 interface HeaderProps {
@@ -9,19 +10,20 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onShowShortcuts }) => {
-  const { 
-    searchQuery, 
-    setSearchQuery, 
-    activeTaskId, 
-    tasks, 
-    toggleSidebar, 
-    user, 
+  const {
+    searchQuery,
+    setSearchQuery,
+    activeTaskId,
+    tasks,
+    toggleSidebar,
+    user,
     isLoading,
     syncStatus,
     pendingSyncCount,
     signIn,
     signOut
   } = useTaskContext();
+  const { hasCompletedTour, resetTour } = useTour();
   const { formattedTime, isActive, mode, startTimer, pauseTimer, resetTimer, toggleMode } = useTimer();
 
   const activeTask = tasks.find(t => t.id === activeTaskId);
@@ -38,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({ onShowShortcuts }) => {
             <Menu size={20} />
         </button>
 
-        <div className="flex-1 relative">
+        <div className="flex-1 relative" data-tour="search">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={16} />
             <input
             id="search-input"
@@ -82,12 +84,25 @@ export const Header: React.FC<HeaderProps> = ({ onShowShortcuts }) => {
 
       {/* Right - Timer & Auth */}
       <div className="flex items-center gap-2 sm:gap-4 pl-2">
+        {/* Start Tour Button */}
+        {hasCompletedTour && (
+          <button
+            onClick={resetTour}
+            className="hidden sm:flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 rounded-md transition-colors"
+            title="Restart tour (Shift+?)"
+          >
+            <Map size={14} />
+            Tour
+          </button>
+        )}
+
         {/* Help Button */}
         {onShowShortcuts && (
           <button
             onClick={onShowShortcuts}
             className="hidden sm:flex p-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors"
             title="Keyboard shortcuts (?"
+            data-tour="help"
           >
             <HelpCircle size={18} />
           </button>
@@ -142,7 +157,7 @@ export const Header: React.FC<HeaderProps> = ({ onShowShortcuts }) => {
         <div className="h-6 sm:h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1" />
 
         {/* Timer */}
-        <div className={cn("flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1.5 rounded-lg border transition-colors", 
+        <div data-tour="timer" className={cn("flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1.5 rounded-lg border transition-colors",
             mode === 'FOCUS' 
               ? (isActive ? "bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/30" : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700") 
               : "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30"

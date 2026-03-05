@@ -8,7 +8,7 @@ import pluginJsxA11y from "eslint-plugin-jsx-a11y";
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
-    ignores: ["dist/**", "node_modules/**", "public/**", "*.config.js", "*.config.ts"],
+    ignores: ["dist/**", "node_modules/**", "public/**", ".kilocode/**", "*.config.js", "*.config.ts"],
   },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,

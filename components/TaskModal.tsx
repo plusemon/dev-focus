@@ -399,117 +399,117 @@ export const TaskModal: React.FC<TaskModalProps> = ({
         {/* Form Content */}
         <div className="flex-1 overflow-y-auto scrollbar-hide">
           <form id="task-form" onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4">
-            {/* Title Section */}
-            <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 p-3 sm:p-4">
-              <input
-                type="text"
-                value={formState.title}
-                onChange={handleTitleChange}
-                placeholder="What needs to get done?"
-                className="w-full bg-transparent text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-50 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none"
-              />
-              <div
-                className={cn(
-                  'mt-2 text-xs',
-                  titleLength > 120 ? 'text-red-500' : 'text-slate-500 dark:text-slate-400'
-                )}
-              >
-                {titleLength}/120
+            {/* Unified Title + Description Card */}
+            <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 p-3 sm:p-4 space-y-3">
+              {/* Title Row with Character Counter */}
+              <div className="flex items-start gap-3 pb-3 border-b border-slate-200/80 dark:border-slate-700/60">
+                <input
+                  type="text"
+                  value={formState.title}
+                  onChange={handleTitleChange}
+                  placeholder="What needs to get done?"
+                  className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-50 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none"
+                />
+                <div
+                  className={cn(
+                    'text-xs shrink-0 mt-1.5',
+                    titleLength > 120 ? 'text-red-500' : 'text-slate-500 dark:text-slate-400'
+                  )}
+                >
+                  {titleLength}/120
+                </div>
+              </div>
+
+              {/* Description Area with Toolbar */}
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1">
+                  <button
+                    type="button"
+                    onClick={() => applyFormat('bold')}
+                    aria-label="Bold"
+                    className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    title="Bold"
+                  >
+                    <Bold size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyFormat('italic')}
+                    aria-label="Italic"
+                    className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    title="Italic"
+                  >
+                    <Italic size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyFormat('underline')}
+                    aria-label="Underline"
+                    className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    title="Underline"
+                  >
+                    <Underline size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyFormat('insertUnorderedList')}
+                    aria-label="Bullet list"
+                    className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    title="Bullet list"
+                  >
+                    <List size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyFormat('insertOrderedList')}
+                    aria-label="Numbered list"
+                    className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    title="Numbered list"
+                  >
+                    <ListOrdered size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleInsertLink}
+                    aria-label="Insert link"
+                    className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    title="Insert link"
+                  >
+                    <Link2 size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleRemoveFormat}
+                    aria-label="Remove selected formatting"
+                    className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    title="Remove selected formatting"
+                  >
+                    <RemoveFormatting size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleClearDescription}
+                    aria-label="Clear"
+                    className="ml-auto p-1.5 rounded-md text-red-500 hover:bg-red-50 dark:hover:bg-red-500/20"
+                    title="Clear"
+                  >
+                    <Eraser size={14} />
+                  </button>
+                </div>
+                <div
+                  ref={editorRef}
+                  contentEditable
+                  suppressContentEditableWarning
+                  onInput={handleEditorInput}
+                  data-placeholder="Add details, code snippets, or checklists..."
+                  className="min-h-32 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 [&:empty:before]:content-[attr(data-placeholder)] [&:empty:before]:text-slate-400 dark:[&:empty:before]:text-slate-500"
+                />
               </div>
             </section>
 
             <section className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.7fr),minmax(0,1fr)] gap-3">
               {/* Left Column */}
               <div className="space-y-3">
-                {/* Description Section */}
-                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-3 space-y-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
-                    Description
-                  </p>
-                  <div className="flex flex-wrap items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1">
-                    <button
-                      type="button"
-                      onClick={() => applyFormat('bold')}
-                      aria-label="Bold"
-                      className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                      title="Bold"
-                    >
-                      <Bold size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => applyFormat('italic')}
-                      aria-label="Italic"
-                      className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                      title="Italic"
-                    >
-                      <Italic size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => applyFormat('underline')}
-                      aria-label="Underline"
-                      className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                      title="Underline"
-                    >
-                      <Underline size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => applyFormat('insertUnorderedList')}
-                      aria-label="Bullet list"
-                      className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                      title="Bullet list"
-                    >
-                      <List size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => applyFormat('insertOrderedList')}
-                      aria-label="Numbered list"
-                      className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                      title="Numbered list"
-                    >
-                      <ListOrdered size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleInsertLink}
-                      aria-label="Insert link"
-                      className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                      title="Insert link"
-                    >
-                      <Link2 size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleRemoveFormat}
-                      aria-label="Remove selected formatting"
-                      className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                      title="Remove selected formatting"
-                    >
-                      <RemoveFormatting size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleClearDescription}
-                      aria-label="Clear"
-                      className="ml-auto p-1.5 rounded-md text-red-500 hover:bg-red-50 dark:hover:bg-red-500/20"
-                      title="Clear"
-                    >
-                      <Eraser size={14} />
-                    </button>
-                  </div>
-                  <div
-                    ref={editorRef}
-                    contentEditable
-                    suppressContentEditableWarning
-                    onInput={handleEditorInput}
-                    data-placeholder="Add details, code snippets, or checklists..."
-                    className="min-h-40 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 [&:empty:before]:content-[attr(data-placeholder)] [&:empty:before]:text-slate-400 dark:[&:empty:before]:text-slate-500"
-                  />
-                </div>
-
                 {/* Subtasks Section */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-3">
                   <SubtaskList subtasks={formState.subtasks} onChange={setSubtasks} />

@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
 import { TaskProvider, useTaskContext } from './context/TaskContext';
+import { TourProvider, useTour } from './context/TourContext';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { TaskBoard } from './components/TaskBoard';
 import { TaskList } from './components/TaskList';
 import { TaskModal } from './components/TaskModal';
 import { KeyboardShortcutsGuide } from './components/KeyboardShortcutsGuide';
+import { Tour } from './components/Tour';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useTimer } from './hooks/useTimer';
-import { Task, TaskStatus, ViewMode } from './types';
+import { Task, TaskStatus } from './types';
 import LoginScreen from './components/LoginScreen';
 
 const DevFocusApp: React.FC = () => {
-  const { 
-    viewMode, 
-    user, 
-    isLoading, 
-    toggleSidebar, 
-    setViewMode, 
+  const {
+    viewMode,
+    user,
+    isLoading,
+    toggleSidebar,
+    setViewMode,
     toggleTheme,
-    searchQuery,
-    setSearchQuery 
+    setSearchQuery
   } = useTaskContext();
+  const { resetTour } = useTour();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [initialStatus, setInitialStatus] = useState<TaskStatus | undefined>(undefined);
@@ -63,6 +65,7 @@ const DevFocusApp: React.FC = () => {
     onShowShortcuts: () => setShowShortcutsGuide(true),
     onSearchFocus: handleSearchFocus,
     onSearchClear: handleSearchClear,
+    onRestartTour: resetTour,
     viewMode,
     isModalOpen,
     timer: {
@@ -89,7 +92,7 @@ const DevFocusApp: React.FC = () => {
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 overflow-hidden font-sans selection:bg-indigo-500/30 transition-colors duration-200">
       
-      <Sidebar />
+      <Sidebar onShowShortcuts={() => setShowShortcutsGuide(true)} />
 
       <div className="flex-1 flex flex-col min-w-0">
         <Header onShowShortcuts={() => setShowShortcutsGuide(true)} />
@@ -118,6 +121,8 @@ const DevFocusApp: React.FC = () => {
         onClose={() => setShowShortcutsGuide(false)}
         viewMode={viewMode}
       />
+
+      <Tour />
     </div>
   );
 };
@@ -125,7 +130,9 @@ const DevFocusApp: React.FC = () => {
 const App: React.FC = () => {
   return (
     <TaskProvider>
-      <DevFocusApp />
+      <TourProvider>
+        <DevFocusApp />
+      </TourProvider>
     </TaskProvider>
   );
 };
