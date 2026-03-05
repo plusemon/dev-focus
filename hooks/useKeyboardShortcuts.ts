@@ -30,7 +30,7 @@ export const useKeyboardShortcuts = ({
   onSearchFocus,
   onSearchClear,
   onRestartTour,
-  _viewMode,
+  viewMode: _viewMode,
   isModalOpen = false,
   timer,
 }: ShortcutsProps) => {

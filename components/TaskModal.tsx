@@ -134,6 +134,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 }) => {
   const { addTask, updateTask, deleteTask, projects, selectedProjectId } = useTaskContext();
   const editorRef = useRef<HTMLDivElement | null>(null);
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
 
   // Consolidated form state using single useState with object
   const [formState, setFormState] = useState<FormState>(INITIAL_FORM_STATE);
@@ -187,6 +188,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({
         projectId: selectedProjectId ?? '',
       }));
     }
+
+    // Auto-focus title input when modal opens
+    requestAnimationFrame(() => {
+      titleInputRef.current?.focus();
+    });
   }, [isOpen, taskToEdit, initialStatus, selectedProjectId, resetForm]);
 
   // Cleanup editor ref when modal closes
@@ -404,6 +410,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               {/* Title Row with Character Counter */}
               <div className="flex items-start gap-3 pb-3 border-b border-slate-200/80 dark:border-slate-700/60">
                 <input
+                  ref={titleInputRef}
                   type="text"
                   value={formState.title}
                   onChange={handleTitleChange}
@@ -425,6 +432,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 <div className="flex flex-wrap items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1">
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={() => applyFormat('bold')}
                     aria-label="Bold"
                     className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -434,6 +442,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                   </button>
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={() => applyFormat('italic')}
                     aria-label="Italic"
                     className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -443,6 +452,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                   </button>
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={() => applyFormat('underline')}
                     aria-label="Underline"
                     className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -452,6 +462,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                   </button>
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={() => applyFormat('insertUnorderedList')}
                     aria-label="Bullet list"
                     className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -461,6 +472,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                   </button>
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={() => applyFormat('insertOrderedList')}
                     aria-label="Numbered list"
                     className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -470,6 +482,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                   </button>
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={handleInsertLink}
                     aria-label="Insert link"
                     className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -479,6 +492,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                   </button>
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={handleRemoveFormat}
                     aria-label="Remove selected formatting"
                     className="p-1.5 rounded-md text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
@@ -488,6 +502,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                   </button>
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={handleClearDescription}
                     aria-label="Clear"
                     className="ml-auto p-1.5 rounded-md text-red-500 hover:bg-red-50 dark:hover:bg-red-500/20"
