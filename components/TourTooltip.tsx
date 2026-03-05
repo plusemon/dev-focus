@@ -31,13 +31,22 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.2 }}
+      initial={{ opacity: 0, scale: 0.9, y: 10 }}
+      animate={{
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        x: isCenterPosition ? '-50%' : 0,
+      }}
+      exit={{ opacity: 0, scale: 0.9, y: 10 }}
+      transition={{
+        duration: 0.3,
+        ease: [0.25, 0.46, 0.45, 0.94],
+        x: { duration: 0 }
+      }}
       className={cn(
         'fixed z-[60] w-80 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden',
-        isCenterPosition && 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+        isCenterPosition && 'top-1/2 left-1/2 -translate-y-1/2'
       )}
       style={!isCenterPosition ? {
         left: position?.x ?? 0,

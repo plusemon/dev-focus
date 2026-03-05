@@ -164,6 +164,11 @@ export const Tour: React.FC = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            layoutId="tour-highlight"
+            transition={{
+              layout: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
+              opacity: { duration: 0.2 }
+            }}
             className="absolute border-2 border-indigo-500 rounded-lg pointer-events-none"
             style={{
               top: targetRect.top,
@@ -178,6 +183,7 @@ export const Tour: React.FC = () => {
         {/* Pulse animation for target */}
         {targetRect && (
           <motion.div
+            key={`pulse-${currentStep}`}
             initial={{ scale: 1, opacity: 0.5 }}
             animate={{ scale: 1.05, opacity: 0 }}
             transition={{ duration: 1.5, repeat: Infinity }}
