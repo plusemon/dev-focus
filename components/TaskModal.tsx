@@ -72,36 +72,6 @@ interface TaskModalProps {
   initialStatus?: TaskStatus;
 }
 
-// Memoized Status Button component to prevent unnecessary re-renders
-interface StatusButtonProps {
-  currentStatus: TaskStatus;
-  selectedStatus: TaskStatus;
-  onSelect: (status: TaskStatus) => void;
-}
-
-const StatusButton = React.memo<StatusButtonProps>(function StatusButton({
-  currentStatus,
-  selectedStatus,
-  onSelect,
-}) {
-  const isSelected = selectedStatus === currentStatus;
-
-  return (
-    <button
-      type="button"
-      onClick={() => onSelect(currentStatus)}
-      className={cn(
-        'rounded-lg px-2.5 py-1.5 text-[11px] font-semibold border transition-all',
-        isSelected
-          ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/30'
-          : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-500/40'
-      )}
-    >
-      {currentStatus.replace('_', ' ')}
-    </button>
-  );
-});
-
 // Memoized Tag Button component
 interface TagButtonProps {
   tag: Tag;
@@ -359,9 +329,6 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     [setDescription]
   );
 
-  // Memoized status values array
-  const statusValues = useMemo(() => Object.values(TaskStatus), []);
-
   if (!isOpen) return null;
 
   return (
@@ -428,23 +395,6 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             <section className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.7fr),minmax(0,1fr)] gap-3">
               {/* Left Column */}
               <div className="space-y-3">
-                {/* Status Section */}
-                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400 mb-3">
-                    Status
-                  </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                    {statusValues.map((currentStatus) => (
-                      <StatusButton
-                        key={currentStatus}
-                        currentStatus={currentStatus}
-                        selectedStatus={formState.status}
-                        onSelect={setStatus}
-                      />
-                    ))}
-                  </div>
-                </div>
-
                 {/* Description Section */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-3 space-y-3">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
@@ -551,34 +501,36 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                   <PrioritySelect value={formState.priority} onChange={setPriority} />
                 </div>
 
-                {/* Project Section */}
-                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400 mb-3">
-                    Project
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setProjectId('')}
-                      className={cn(
-                        'text-[11px] px-2 py-1 rounded-full border font-medium transition-colors',
-                        !formState.projectId
-                          ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent'
-                          : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-                      )}
-                    >
-                      No project
-                    </button>
-                    {projects.map((project) => (
-                      <ProjectButton
-                        key={project.id}
-                        project={project}
-                        isSelected={formState.projectId === project.id}
-                        onSelect={setProjectId}
-                      />
-                    ))}
+                {/* Project Section - only show when viewing All Projects */}
+                {!selectedProjectId && (
+                  <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-3">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400 mb-3">
+                      Project
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setProjectId('')}
+                        className={cn(
+                          'text-[11px] px-2 py-1 rounded-full border font-medium transition-colors',
+                          !formState.projectId
+                            ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent'
+                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                        )}
+                      >
+                        No project
+                      </button>
+                      {projects.map((project) => (
+                        <ProjectButton
+                          key={project.id}
+                          project={project}
+                          isSelected={formState.projectId === project.id}
+                          onSelect={setProjectId}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Tags Section */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/40 p-3">
